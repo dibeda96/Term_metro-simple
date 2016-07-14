@@ -1,0 +1,62 @@
+// dibeda96 @TranityDS
+ 
+ #include <LiquidCrystal.h>
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);  // Librería y asignación de pines para nuestro display 16x2
+
+float centi()
+{
+  int dato;
+  float c;
+  dato=analogRead(A0);  // El sensor LM35 va conectado a ésta entrada análoga AO, se puede cambiar a libertad en caso de ser necesario.
+  c = (500.0 * dato)/1023;
+  //Esta fórmula se obtiene mediante una relación del sensor con respecto a los grados. 
+  //El sensor de temperatura LM35 hace variaciones de 10 mV por 
+  //cada grado Celsius.
+  // Ejemplo: 23.0ºC = 230 mV = 0.230 V.
+  //Como el convertidor Análogo a Digital es de 10 Bits eso es 2^10 = 1024, iniciando en cero, tenemos del 0 al 1023.
+  //Resultando Voltaje de salida = (5V*Dato)/1023 siendo  ( 0 < Dato < 1023 ) y para ajustar la escala a grados centígrados: Voltaje de salida = ((5V*Dato)*100)/1023
+  return (c);
+}
+float kelvin(float cent)
+{
+  float k;
+  k=cent+273.15;
+  return(k); 
+}
+float fahren(float cent)
+{
+  float f;
+  f=cent*1.8+32;
+  return (f);
+}
+void setup() {                     
+lcd.begin(16,2);    // Declaramos que el display es de  16x2 y mandamos imprimir algo que se quedará fijo.
+lcd.setCursor(2,0); // ponemos el cursor en el segundo espacio de la primera fila para introducir datos.
+lcd.print(" Sensor de ");
+lcd.setCursor(1,1);
+lcd.print(" Temperatura");
+delay(2500);
+lcd.clear();
+lcd.setCursor(0,0);
+lcd.print("@dibeda96  ");
+lcd.setCursor(7,1);
+lcd.print("TranityDS");
+delay(2500);
+lcd.clear();
+lcd.setCursor(2,0);
+lcd.print("Temperatura: ");
+lcd.setCursor(1,1);
+lcd.print("C=      F=");
+}
+void loop() {
+  float Centigrados = centi();
+  float Fahrenheit = fahren (Centigrados);
+  float Kelvin = kelvin (Centigrados);
+  
+  lcd.setCursor(3,1);
+  lcd.print(Centigrados);
+  lcd.setCursor(11,1);
+  lcd.print(Fahrenheit);
+  delay(500);        // como se puede observar, en el display sólo estoy mostrando los valores de F y C, pero se calculan tambien K.
+                     // para agregarlo, se agrega un delay y un clear y se agrega la línea de lcd.print(Kelvin);
+}
